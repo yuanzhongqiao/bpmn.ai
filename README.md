@@ -1,85 +1,64 @@
-
-
-# BPMN.AI
-
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Status](https://travis-ci.org/viadee/bpmn.ai.svg?branch=master)](https://travis-ci.org/viadee/bpmn.ai/branches "See test builds")
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/viadee/bpmn.ai.svg)
-[![Maven Central](https://img.shields.io/maven-central/v/de.viadee/bpmnai-core.svg)](https://search.maven.org/search?q=g:de.viadee%20a:bpmnai-core)
-
-*Read this in other languages: [German](README.de.md).*
-
-## Orientation
-:dart: The goal: [bpmn.ai](https://www.viadee.de/bpmnai) is a set of tools and ideas that 
-
-* integrate the analytic power of machine learning approaches
-* the flexibility and expressiveness of the BPMN language
-* in order to find and implement different business cases in a sustainable, explainable way.
-
-With this goal in mind, we provide different components for the open source community:
-
-* [bpmn.ai-patterns](https://github.com/viadee/bpmn.ai-patterns): A collection of process model patterns to orchestrate the use of AI in business processes (for executives and IT-architects).
-* bpmn.ai-core: In this repository you can find a reusable, scaleable data extraction pipeline (based on Apache Spark) that distills process data from popular BPMN-Engines (such as Camunda) into a machine learning-ready format, in order to reflect on the process in all kinds of ways (for data science engineers).
-* bpmn.ai-ui: You can find a UI to set up and control bpmn.ai-core in the following Github repository: [https://github.com/viadee/bpmn.ai-ui](https://github.com/viadee/bpmn.ai-ui) (for data science engineers).
-
-# bpmn.ai-core 
-bpmn.ai-core describes the approach of preparing and using standard process data for data mining with reusable analytics components. Bpmn.ai-core covers the entire pipeline, which means data extraction, transformation and processing of the data, learning a suitable machine learning algorithm and applying the knowledge gained in order to optimize or automate processes: Such process centric machine learning models can be used for wide variety of applications such as e.g. bottleneck analyses, process duration predictions or anomaly detection.
-
-This results in the following overall picture of a [bpmn.ai](https://www.viadee.de/bpmnai) process intelligence pipeline, which is very easy to set up and can also be used with large datasets:
-
-![](./bpmnai-core/doc/Pipeline.en.png)
-
-This repository contains the (configurable) data preparation pipeline using Apache Spark. Oftentimes, 80% of the effort of a data mining project is spent on data preparation: If the data source is "known" beforehand and has a stable structure, a lot of things can be reused and everyone benefits from further development.
-
-## Collaboration
-
-The project is operated and further developed by the viadee Consulting AG in Münster, Westphalia. Results from theses at the WWU Münster and the FH Münster have been incorporated.
-
-* Further theses are planned: Contact person is Dr. Frank Köhne from viadee.
-* Community contributions to the project are welcome: Please open Github-Issues with suggestions (or PR), which we can then edit in the team.
-* We are also looking for further partners who have interesting process data to refine our tooling as well as partners that are simply interested in a discussion about AI in the context of business process automation.
-
-# Roadmap
-We are currently collecting feedback and prioritising ideas for further development. We have already planned:
-* The bpmn.ai-Tooling should become more accessible and more descriptive.
-* We plan to integrate approaches from the Explainable AI (XAI) such as [Anchors](https://github.com/viadee/javaAnchorExplainer) into the application process.
-
-# Components
-
-## bpmn.ai-core
-
-The bpmn.ai-core contains three Apache Spark applications that are used to translate data from the Camunda engine to a data mining table that consists of one row per process instance with additional columns for each process variable. This data mining table is then used to train a machine learning algorithm to predict certain future events of the process.
-The following applications are available:
-
-* CSVImportAndProcessingApplication
-* KafkaImportApplication
-* KafkaProcessingApplication
-
-Each of these applications serves a different purpose.
-
-A **tutorial** and examples of the applications can be found in the [Wiki](https://github.com/viadee/bpmn.ai/wiki/Tutorial-1-%E2%80%90-Spark-Importer).
-
-### Data pipeline
-
-The following graphic shows the pipeline through which the data flows from Camunda to the Machine Learning engine. Each of the three applications serves a specific purpose and specific use cases concerning importing, aggregating and transforming data and exporting it from Apache Spark.
-
-![](./bpmnai-core/doc/BpmnaiApplicationFlow.png)
-
-### CSVImportAndProcessingApplication
-
-This application (class: CSVImportAndProcessingApplication) takes data from a CSV export of the Camunda history database tables and aggregates it to a data mining table. The result is also a CSV file of the data mining table structure.
-
-### KafkaImportApplication
-
-This application (class: KafkaImportApplication) retrieves data from Kafka in which three queues have been provided and filled with data from a Camunda history event handler:
-
-* processInstance: filled with events at process instance level
-* activityInstance: filled with events at activity instance level
-* variableUpdate: filled with events that happen when a variable is updated in any way.
-
-The data retrieved is then stored at a defined location as parquet files. There is no data processing by this application as it can run as a Spark application that constantly receives data from Kafka streams.
-
-### KafkaProcessingApplication
-
-This application (class: KafkaProcessingApplication) retrieves data from a Kafka import. The data goes through the same steps as in the CSV import and processing application, it is a separate application because it has a different input than the CSV case.
-
+<div class="Box-sc-g0xbh4-0 QkQOb js-snippet-clipboard-copy-unpositioned" data-hpc="true"><article class="markdown-body entry-content container-lg" itemprop="text"><div class="markdown-heading" dir="auto"><h1 tabindex="-1" class="heading-element" dir="auto" _msttexthash="22792055" _msthash="215">BPMN 的人工智能</h1><a id="user-content-bpmnai" class="anchor" aria-label="永久链接：BPMN。人工智能" href="#bpmnai" _mstaria-label="272285" _msthash="216"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://opensource.org/licenses/BSD-3-Clause" rel="nofollow"><img src="https://camo.githubusercontent.com/439fd5ffe2ac21b3daa03ac6474978163be089da5fbba2790769ae2275464e35/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4c6963656e73652d425344253230332d2d436c617573652d626c75652e737667" alt="许可证" data-canonical-src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" style="max-width: 100%;" _mstalt="93288" _msthash="217"></a>
+<a href="https://travis-ci.org/viadee/bpmn.ai/branches" title="See test builds" rel="nofollow"><img src="https://camo.githubusercontent.com/e437b9ded1c9844117939144668429b29f5c0f4cc68ed8843efa94e9244bcc62/68747470733a2f2f7472617669732d63692e6f72672f7669616465652f62706d6e2e61692e7376673f6272616e63683d6d6173746572" alt="地位" data-canonical-src="https://travis-ci.org/viadee/bpmn.ai.svg?branch=master" style="max-width: 100%;" _mstalt="80717" _msthash="218"></a>
+<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9841083cefeb385a0641c30b324c10077d440d481c2adf22116963b829b92d5c/68747470733a2f2f696d672e736869656c64732e696f2f646f636b65722f636c6f75642f6275696c642f7669616465652f62706d6e2e61692e737667"><img src="https://camo.githubusercontent.com/9841083cefeb385a0641c30b324c10077d440d481c2adf22116963b829b92d5c/68747470733a2f2f696d672e736869656c64732e696f2f646f636b65722f636c6f75642f6275696c642f7669616465652f62706d6e2e61692e737667" alt="Docker Cloud 构建状态" data-canonical-src="https://img.shields.io/docker/cloud/build/viadee/bpmn.ai.svg" style="max-width: 100%;" _mstalt="518908" _msthash="219"></a>
+<a href="https://search.maven.org/search?q=g:de.viadee%20a:bpmnai-core" rel="nofollow"><img src="https://camo.githubusercontent.com/68e7c909cd7bf0575bab31f1ee5e485dc69b71aae8c0f5bd1f34e27ab5c78a9a/68747470733a2f2f696d672e736869656c64732e696f2f6d6176656e2d63656e7472616c2f762f64652e7669616465652f62706d6e61692d636f72652e737667" alt="Maven 中心" data-canonical-src="https://img.shields.io/maven-central/v/de.viadee/bpmnai-core.svg" style="max-width: 100%;" _mstalt="200343" _msthash="220"></a></p>
+<p dir="auto"><em _msttexthash="55845946" _msthash="221">用其他语言阅读： <a href="/viadee/bpmn.ai/blob/master/README.de.md" _istranslated="1">德语</a>。</em></p>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto" _msttexthash="4191226" _msthash="222">取向</h2><a id="user-content-orientation" class="anchor" aria-label="永久链接：方向" href="#orientation" _mstaria-label="481689" _msthash="223"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="178998469" _msthash="224">🎯 目标：<a href="https://www.viadee.de/bpmnai" rel="nofollow" _istranslated="1">bpmn.ai</a> 是一组工具和想法，这些工具和想法</p>
+<ul dir="auto">
+<li _msttexthash="57131464" _msthash="225">集成机器学习方法的分析能力</li>
+<li _msttexthash="57374785" _msthash="226">BPMN 语言的灵活性和表现力</li>
+<li _msttexthash="155779975" _msthash="227">以便以可持续、可解释的方式查找和实施不同的业务案例。</li>
+</ul>
+<p dir="auto" _msttexthash="166885095" _msthash="228">考虑到这个目标，我们为开源社区提供了不同的组件：</p>
+<ul dir="auto">
+<li _msttexthash="602402385" _msthash="229"><a href="https://github.com/viadee/bpmn.ai-patterns" _istranslated="1">bpmn.ai-patterns</a>：流程模型模式的集合，用于编排 AI 在业务流程中的使用（适用于高管和 IT 架构师）。</li>
+<li _msttexthash="2553080842" _msthash="230">bpmn.ai-core：在这个存储库中，您可以找到一个可重用、可扩展的数据提取管道（基于 Apache Spark），它将来自流行的 BPMN 引擎（如 Camunda）的流程数据提炼成机器学习就绪的格式，以便以各种方式反映流程（对于数据科学工程师）。</li>
+<li _msttexthash="818093991" _msthash="231">bpmn.ai-ui：您可以在以下 Github 存储库中找到用于设置和控制 bpmn.ai-core 的 UI：<a href="https://github.com/viadee/bpmn.ai-ui" _istranslated="1">https://github.com/viadee/bpmn.ai-ui</a>（适用于数据科学工程师）。</li>
+</ul>
+<div class="markdown-heading" dir="auto"><h1 tabindex="-1" class="heading-element" dir="auto" _msttexthash="186485" _msthash="232">bpmn.ai-core</h1><a id="user-content-bpmnai-core" class="anchor" aria-label="永久链接：bpmn.ai-core" href="#bpmnai-core" _mstaria-label="482300" _msthash="233"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="4435804347" _msthash="234">bpmn.ai-core 描述了通过可重用的分析组件准备和使用标准流程数据进行数据挖掘的方法。Bpmn.ai-core 涵盖了整个管道，这意味着数据提取、转换和处理数据，学习合适的机器学习算法并应用获得的知识来优化或自动化流程：这种以流程为中心的机器学习模型可用于各种应用，例如瓶颈分析、流程持续时间预测或异常检测。</p>
+<p dir="auto" _msttexthash="560759355" _msthash="235">这导致了以下 <a href="https://www.viadee.de/bpmnai" rel="nofollow" _istranslated="1">bpmn.ai</a> 流程智能管道的整体情况，该管道非常易于设置，也可以与大型数据集一起使用：</p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/viadee/bpmn.ai/blob/master/bpmnai-core/doc/Pipeline.en.png"><img src="/viadee/bpmn.ai/raw/master/bpmnai-core/doc/Pipeline.en.png" alt="" style="max-width: 100%;"></a></p>
+<p dir="auto" _msttexthash="2088760661" _msthash="236">此存储库包含使用 Apache Spark 的（可配置的）数据准备管道。通常，数据挖掘项目 80% 的精力都花在数据准备上：如果数据源事先“已知”并且具有稳定的结构，则很多东西都可以重用，每个人都可以从进一步开发中受益。</p>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto" _msttexthash="4053621" _msthash="237">协作</h2><a id="user-content-collaboration" class="anchor" aria-label="永久链接：协作" href="#collaboration" _mstaria-label="554970" _msthash="238"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="498909554" _msthash="239">该项目由位于威斯特伐利亚明斯特的 viadee Consulting AG 运营和进一步开发。WWU Münster 和 FH Münster 的论文结果已被纳入。</p>
+<ul dir="auto">
+<li _msttexthash="153613603" _msthash="240">进一步的论文正在计划中：联系人是来自 viadee 的 Frank Köhne 博士。</li>
+<li _msttexthash="582556208" _msthash="241">欢迎社区对项目做出贡献：请打开 Github-Issues 并提出建议（或 PR），然后我们可以在团队中编辑这些建议。</li>
+<li _msttexthash="659575462" _msthash="242">我们还在寻找更多拥有有趣流程数据的合作伙伴来改进我们的工具，以及只对业务流程自动化背景下的 AI 讨论感兴趣的合作伙伴。</li>
+</ul>
+<div class="markdown-heading" dir="auto"><h1 tabindex="-1" class="heading-element" dir="auto" _msttexthash="9286563" _msthash="243">路线图</h1><a id="user-content-roadmap" class="anchor" aria-label="永久链接： 路线图" href="#roadmap" _mstaria-label="331747" _msthash="244"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="287625923" _msthash="245">我们目前正在收集反馈并确定进一步开发的想法的优先级。我们已经计划了：</p>
+<ul dir="auto">
+<li _msttexthash="159863002" _msthash="246">bpmn.ai-Tooling 应该变得更易于访问且更具描述性。</li>
+<li _msttexthash="328823352" _msthash="247">我们计划将 Explainable AI （XAI） 的方法（例如 <a href="https://github.com/viadee/javaAnchorExplainer" _istranslated="1">Anchors</a>）集成到申请流程中。</li>
+</ul>
+<div class="markdown-heading" dir="auto"><h1 tabindex="-1" class="heading-element" dir="auto" _msttexthash="5055388" _msthash="248">组件</h1><a id="user-content-components" class="anchor" aria-label="永久链接： Components" href="#components" _mstaria-label="446381" _msthash="249"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto" _msttexthash="186485" _msthash="250">bpmn.ai-core</h2><a id="user-content-bpmnai-core-1" class="anchor" aria-label="永久链接：bpmn.ai-core" href="#bpmnai-core-1" _mstaria-label="482300" _msthash="251"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="2925388661" _msthash="252">该 bpmn.ai-core 包含三个 Apache Spark 应用程序，用于将数据从 Camunda 引擎转换为数据挖掘表，该表由每个流程实例一行组成，每个流程变量都有附加列。然后，此数据挖掘表用于训练机器学习算法，以预测流程的某些未来事件。
+以下应用程序可用：</p>
+<ul dir="auto">
+<li _msttexthash="43999605" _msthash="253">CSVImportAndProcessing应用程序</li>
+<li _msttexthash="27983137" _msthash="254">KafkaImport应用程序</li>
+<li _msttexthash="33791199" _msthash="255">KafkaProcessing应用程序</li>
+</ul>
+<p dir="auto" _msttexthash="102697439" _msthash="256">这些应用程序中的每一个都有不同的用途。</p>
+<p dir="auto" _msttexthash="99122517" _msthash="257">可以在 <a href="https://github.com/viadee/bpmn.ai/wiki/Tutorial-1-%E2%80%90-Spark-Importer" _istranslated="1">Wiki</a> 中找到应用程序的<strong _istranslated="1">教程</strong>和示例。</p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto" _msttexthash="13516347" _msthash="258">数据管道</h3><a id="user-content-data-pipeline" class="anchor" aria-label="永久链接：数据管道" href="#data-pipeline" _mstaria-label="509873" _msthash="259"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="1074757580" _msthash="260">下图显示了数据从 Camunda 流向机器学习引擎的管道。这三个应用程序中的每一个都有特定的用途和特定的使用案例，涉及导入、聚合和转换数据以及从 Apache Spark 导出数据。</p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/viadee/bpmn.ai/blob/master/bpmnai-core/doc/BpmnaiApplicationFlow.png"><img src="/viadee/bpmn.ai/raw/master/bpmnai-core/doc/BpmnaiApplicationFlow.png" alt="" style="max-width: 100%;"></a></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto" _msttexthash="43999605" _msthash="261">CSVImportAndProcessing应用程序</h3><a id="user-content-csvimportandprocessingapplication" class="anchor" aria-label="永久链接：CSVImportAndProcessingApplication" href="#csvimportandprocessingapplication" _mstaria-label="1601119" _msthash="262"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="1274625261" _msthash="263">此应用程序（类：CSVImportAndProcessingApplication）从 Camunda 历史数据库表的 CSV 导出中获取数据，并将其聚合到数据挖掘表中。结果也是数据挖掘表结构的 CSV 文件。</p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto" _msttexthash="27983137" _msthash="264">KafkaImport应用程序</h3><a id="user-content-kafkaimportapplication" class="anchor" aria-label="永久链接：KafkaImportApplication" href="#kafkaimportapplication" _mstaria-label="960973" _msthash="265"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="847375490" _msthash="266">此应用程序（类：KafkaImportApplication）从 Kafka 检索数据，其中提供了三个队列，并填充了来自 Camunda 历史事件处理程序的数据：</p>
+<ul dir="auto">
+<li _msttexthash="113571718" _msthash="267">processInstance：在流程实例级别填充事件</li>
+<li _msttexthash="123613620" _msthash="268">activityInstance：填充了 activity 实例级别的事件</li>
+<li _msttexthash="198437382" _msthash="269">variableUpdate：填充了以任何方式更新变量时发生的事件。</li>
+</ul>
+<p dir="auto" _msttexthash="841086454" _msthash="270">然后，检索到的数据将作为 parquet 文件存储在定义的位置。此应用程序没有数据处理，因为它可以作为不断从 Kafka 流接收数据的 Spark 应用程序运行。</p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto" _msttexthash="33791199" _msthash="271">KafkaProcessing应用程序</h3><a id="user-content-kafkaprocessingapplication" class="anchor" aria-label="永久链接：KafkaProcessingApplication" href="#kafkaprocessingapplication" _mstaria-label="1180647" _msthash="272"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto" _msttexthash="1517980971" _msthash="273">此应用程序（类：KafkaProcessingApplication）从 Kafka 导入中检索数据。数据执行与 CSV 导入和处理应用程序中相同的步骤，它是一个单独的应用程序，因为它的输入与 CSV 大小写不同。</p>
+</article></div>
